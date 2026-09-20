@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hiragana Dojo - 10 Stage Mastery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      touch-action: manipulation;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      70% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .pop-in {
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+    /* Custom scrollbar for clean modals */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(79, 70, 229, 0.5);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-full flex flex-col justify-between selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+  <!-- Top App Header -->
+  <header class="w-full max-w-md mx-auto px-4 py-3 flex items-center justify-between border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-20">
+    <div class="flex items-center space-x-2.5">
+      <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30 text-white font-extrabold text-lg">
+        あ
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-white">Hiragana Dojo</h1>
+        <p class="text-[10px] text-slate-400 font-medium">Dakuten, Tenten &amp; Stages</p>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center space-x-2">
+      <!-- Reference Chart Trigger -->
+      <button id="btn-open-chart" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700/50 flex items-center justify-center shadow-sm" title="Reference Chart">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+      </button>
+
+      <!-- Stage Selector Trigger -->
+      <button id="btn-open-stages" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700/50 relative flex items-center justify-center shadow-sm" title="Select Stage">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <span id="stage-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 rounded-full flex items-center justify-center text-[9px] font-bold text-white shadow-md">1</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-md w-full mx-auto px-4 py-3 flex flex-col justify-between">
+    
+    <!-- Stage Progress & Stats Bar -->
+    <div class="space-y-3 mb-2">
+      <!-- Stage Progress Bar Card -->
+      <div class="bg-slate-900/80 p-3 rounded-2xl flex flex-col space-y-2 border border-slate-800 shadow-lg">
+        <div class="flex justify-between items-center">
+          <span id="stage-title-text" class="text-xs font-bold text-slate-200 tracking-wide uppercase">Stage 1: Basics</span>
+          <span id="stage-progress-text" class="text-xs font-bold text-indigo-400">0/15</span>
+        </div>
+        <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden p-0.5">
+          <div id="stage-progress-bar" class="bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-2 shadow-sm">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Streak 🔥</div>
+          <div id="streak-counter" class="text-sm font-extrabold text-amber-400">0</div>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-2 shadow-sm">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Accuracy</div>
+          <div id="stat-accuracy" class="text-sm font-extrabold text-emerald-400">100%</div>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-2 shadow-sm">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Best Streak</div>
+          <div id="stat-best-streak" class="text-sm font-extrabold text-indigo-400">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Quiz Card -->
+    <div id="quiz-card" class="bg-gradient-to-b from-slate-900 to-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col items-center justify-between my-auto relative overflow-hidden">
+      
+      <!-- Card Header Category Badge -->
+      <div class="w-full flex items-center justify-between mb-2">
+        <span id="question-category-badge" class="px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold tracking-wider uppercase">
+          BASIC | READING
+        </span>
+        <!-- Pronunciation Button -->
+        <button id="btn-speak" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700/50 flex items-center space-x-1" title="Pronounce">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        </button>
+      </div>
+
+      <!-- Main Prompt Character / Word Display -->
+      <div class="py-6 text-center">
+        <div id="prompt-display" class="text-7xl sm:text-8xl font-black text-white tracking-wider drop-shadow-md transition-all">
+          あ
+        </div>
+        <div id="prompt-subtext" class="text-xs text-slate-400 mt-2 font-medium">Select the correct Romaji reading</div>
+      </div>
+
+      <!-- Input Mode 1: Multiple Choice Grid -->
+      <div id="mcq-container" class="w-full grid grid-cols-2 gap-3 mb-2">
+        <!-- Dynamically injected MCQ options -->
+      </div>
+
+      <!-- Input Mode 2: Romaji Typing Form -->
+      <form id="typing-form" class="w-full flex flex-col space-y-3 hidden mb-2">
+        <input 
+          type="text" 
+          id="romaji-input" 
+          autocomplete="off" 
+          autocapitalize="none" 
+          spellcheck="false"
+          placeholder="Type romaji (e.g. ga, shi, kya)..." 
+          class="w-full bg-slate-950 border-2 border-slate-700/80 focus:border-indigo-500 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 text-base font-semibold outline-none transition-all shadow-inner text-center"
+        >
+        <button 
+          type="submit" 
+          class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30">
+          Submit Answer
+        </button>
+      </form>
+
+      <!-- Feedback Toast Banner -->
+      <div id="feedback-banner" class="mt-3 min-h-[44px] w-full rounded-xl flex items-center justify-center px-4 py-2 text-sm font-semibold opacity-0 transition-opacity duration-200">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Stage Selection Modal -->
+  <div id="modal-stages" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden transition-opacity">
+    <div class="bg-slate-900 border border-slate-800 w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl max-h-[85vh] flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          <h2 class="text-base font-bold text-white">Select Stage (1-10)</h2>
+        </div>
+        <button id="btn-close-stages" class="p-1 rounded-lg text-slate-400 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-3 overflow-y-auto flex-1 pr-1">
+        <p class="text-xs text-slate-400 mb-1 leading-relaxed">Each stage tests you through reading, recognition, and typing challenges across specific character groups.</p>
+        
+        <div id="stage-grid" class="grid grid-cols-2 gap-2.5">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Study Reference Chart Modal -->
+  <div id="modal-chart" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex flex-col hidden">
+    <!-- Chart Header -->
+    <div class="max-w-md w-full mx-auto px-4 py-3 flex justify-between items-center border-b border-slate-800 bg-slate-900/90">
+      <div class="flex items-center space-x-2">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        <h2 class="text-base font-bold text-white">Hiragana Reference Chart</h2>
+      </div>
+      <button id="btn-close-chart" class="p-1 rounded-lg text-slate-400 hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- Chart Tabs -->
+    <div class="max-w-md w-full mx-auto px-4 py-2 bg-slate-900/40 border-b border-slate-800/80 overflow-x-auto flex space-x-2 shrink-0">
+      <button class="chart-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white whitespace-nowrap transition-all shadow-sm" data-chart-tab="basic">Basic (46)</button>
+      <button class="chart-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap transition-all shadow-sm" data-chart-tab="dakuten">Dakuten &amp; Handakuten (25)</button>
+      <button class="chart-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap transition-all shadow-sm" data-chart-tab="combinations">Combinations / Yōon (33)</button>
+      <button class="chart-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap transition-all shadow-sm" data-chart-tab="words">Common Words (20)</button>
+    </div>
+
+    <!-- Chart Grid Container -->
+    <div class="flex-1 max-w-md w-full mx-auto p-4 overflow-y-auto">
+      <div id="chart-grid" class="grid grid-cols-5 gap-2.5 pb-6">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Banner -->
+  <footer class="py-2 text-center text-[11px] text-slate-500 border-t border-slate-800/60 bg-slate-900/40">
+    Tap <b>"Add to Home Screen"</b> in browser menu to install app
+  </footer>
+
+  <script>
+    // Complete Kana Database mapped across 10 Progressive Stages
+    const kanaDatabase = [
+      // Stage 1: Vowels & K Column (Basic)
+      { hiragana: "あ", romaji: "a", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "い", romaji: "i", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "う", romaji: "u", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "え", romaji: "e", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "お", romaji: "o", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "か", romaji: "ka", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "き", romaji: "ki", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "く", romaji: "ku", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "け", romaji: "ke", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+      { hiragana: "こ", romaji: "ko", category: "basic", stage: 1, label: "Stage 1: Vowels & K" },
+
+      // Stage 2: S & T Columns
+      { hiragana: "さ", romaji: "sa", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "し", romaji: "shi", altRomaji: ["si"], category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "す", romaji: "su", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "せ", romaji: "se", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "そ", romaji: "so", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "た", romaji: "ta", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "ち", romaji: "chi", altRomaji: ["ti"], category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "つ", romaji: "tsu", altRomaji: ["tu"], category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "て", romaji: "te", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+      { hiragana: "と", romaji: "to", category: "basic", stage: 2, label: "Stage 2: S & T Columns" },
+
+      // Stage 3: N & H Columns
+      { hiragana: "な", romaji: "na", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "に", romaji: "ni", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "ぬ", romaji: "nu", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "ね", romaji: "ne", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "の", romaji: "no", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "は", romaji: "ha", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "ひ", romaji: "hi", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "ふ", romaji: "fu", altRomaji: ["hu"], category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "へ", romaji: "he", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+      { hiragana: "ほ", romaji: "ho", category: "basic", stage: 3, label: "Stage 3: N & H Columns" },
+
+      // Stage 4: M, Y, R, W, N Endings
+      { hiragana: "ま", romaji: "ma", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "み", romaji: "mi", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "む", romaji: "mu", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "め", romaji: "me", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "も", romaji: "mo", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "や", romaji: "ya", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "ゆ", romaji: "yu", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "よ", romaji: "yo", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "ら", romaji: "ra", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "り", romaji: "ri", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "る", romaji: "ru", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "れ", romaji: "re", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "ろ", romaji: "ro", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "わ", romaji: "wa", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "を", romaji: "wo", altRomaji: ["o"], category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+      { hiragana: "ん", romaji: "n", category: "basic", stage: 4, label: "Stage 4: M, Y, R, W, N" },
+
+      // Stage 5: Dakuten / Tenten 1 (G & Z columns)
+      { hiragana: "が", romaji: "ga", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ぎ", romaji: "gi", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ぐ", romaji: "gu", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "げ", romaji: "ge", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ご", romaji: "go", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ざ", romaji: "za", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "じ", romaji: "ji", altRomaji: ["zi"], category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ず", romaji: "zu", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ぜ", romaji: "ze", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+      { hiragana: "ぞ", romaji: "zo", category: "dakuten", stage: 5, label: "Stage 5: Dakuten (G & Z)" },
+
+      // Stage 6: Dakuten 2 (D, B) & Handakuten (P)
+      { hiragana: "だ", romaji: "da", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぢ", romaji: "ji", altRomaji: ["di"], category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "づ", romaji: "zu", altRomaji: ["du"], category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "で", romaji: "de", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ど", romaji: "do", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ば", romaji: "ba", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "び", romaji: "bi", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぶ", romaji: "bu", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "べ", romaji: "be", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぼ", romaji: "bo", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぱ", romaji: "pa", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぴ", romaji: "pi", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぷ", romaji: "pu", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぺ", romaji: "pe", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+      { hiragana: "ぽ", romaji: "po", category: "dakuten", stage: 6, label: "Stage 6: Dakuten & Maru (D,B,P)" },
+
+      // Stage 7: Combinations / Yōon 1 (Kya, Sha, Cha, Nya)
+      { hiragana: "きゃ", romaji: "kya", category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "きゅ", romaji: "kyu", category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "きょ", romaji: "kyo", category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "しゃ", romaji: "sha", altRomaji: ["sya"], category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "しゅ", romaji: "shu", altRomaji: ["syu"], category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "しょ", romaji: "sho", altRomaji: ["syo"], category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "ちゃ", romaji: "cha", altRomaji: ["tya"], category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "ちゅ", romaji: "chu", altRomaji: ["tyu"], category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "ちょ", romaji: "cho", altRomaji: ["tyo"], category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "にゃ", romaji: "nya", category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "にゅ", romaji: "nyu", category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+      { hiragana: "にょ", romaji: "nyo", category: "combinations", stage: 7, label: "Stage 7: Combinations (K,S,C,N)" },
+
+      // Stage 8: Combinations / Yōon 2 (Hya, Mya, Rya, Gya, Ja, Bya, Pya)
+      { hiragana: "ひゃ", romaji: "hya", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ひゅ", romaji: "hyu", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ひょ", romaji: "hyo", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "みゃ", romaji: "mya", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "みゅ", romaji: "myu", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "みょ", romaji: "myo", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "りゃ", romaji: "rya", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "りゅ", romaji: "ryu", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "りょ", romaji: "ryo", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ぎゃ", romaji: "gya", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ぎゅ", romaji: "gyu", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ぎょ", romaji: "gyo", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "じゃ", romaji: "ja", altRomaji: ["jya", "zya"], category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "じゅ", romaji: "ju", altRomaji: ["jyu", "zyu"], category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "じょ", romaji: "jo", altRomaji: ["jyo", "zyo"], category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "びゃ", romaji: "bya", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "びゅ", romaji: "byu", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "びょ", romaji: "byo", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ぴゃ", romaji: "pya", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ぴゅ", romaji: "pyu", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+      { hiragana: "ぴょ", romaji: "pyo", category: "combinations", stage: 8, label: "Stage 8: Advanced Yōon" },
+
+      // Stage 9: Words & Phrases 1 (Greetings & Common words)
+      { hiragana: "こんにちは", romaji: "konnichiwa", category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "ありがとう", romaji: "arigatou", altRomaji: ["arigato"], category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "がんばって", romaji: "ganbatte", category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "えんぴつ", romaji: "enpitsu", category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "しゃしん", romaji: "shashin", category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "きょう", romaji: "kyou", altRomaji: ["kyo"], category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "おはよう", romaji: "ohayou", altRomaji: ["ohayo"], category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "さようなら", romaji: "sayounara", altRomaji: ["sayonara"], category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "すみません", romaji: "sumimasen", category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+      { hiragana: "だいじょうぶ", romaji: "daijoubu", altRomaji: ["daijobu"], category: "words", stage: 9, label: "Stage 9: Vocabulary 1" },
+
+      // Stage 10: Words & Phrases 2 (Animals, Food, Daily Life)
+      { hiragana: "ねこ", romaji: "neko", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "いぬ", romaji: "inu", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "たべもの", romaji: "tabemono", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "のみもの", romaji: "nomimono", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "たのしい", romaji: "tanoshii", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "にほんご", romaji: "nihongo", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "ともだち", romaji: "tomodachi", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "がっこう", romaji: "gakkou", altRomaji: ["gakko"], category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "せんせい", romaji: "sensei", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" },
+      { hiragana: "みず", romaji: "mizu", category: "words", stage: 10, label: "Stage 10: Vocabulary 2" }
+    ];
+
+    // App State Management
+    const state = {
+      currentStage: parseInt(localStorage.getItem("hiragana_stage") || "1"),
+      maxStage: parseInt(localStorage.getItem("hiragana_max_stage") || "1"),
+      score: 0,
+      totalAnswered: 0,
+      streak: 0,
+      bestStreak: parseInt(localStorage.getItem("hiragana_best_streak") || "0"),
+      queue: [],
+      totalInStage: 0,
+      isProcessing: false,
+      activeChartTab: "basic"
+    };
+
+    // DOM Element References
+    const elements = {
+      streakCounter: document.getElementById("streak-counter"),
+      statAccuracy: document.getElementById("stat-accuracy"),
+      statBestStreak: document.getElementById("stat-best-streak"),
+      
+      stageTitleText: document.getElementById("stage-title-text"),
+      stageProgressText: document.getElementById("stage-progress-text"),
+      stageProgressBar: document.getElementById("stage-progress-bar"),
+      stageBadge: document.getElementById("stage-badge"),
+
+      promptDisplay: document.getElementById("prompt-display"),
+      promptSubtext: document.getElementById("prompt-subtext"),
+      categoryBadge: document.getElementById("question-category-badge"),
+      mcqContainer: document.getElementById("mcq-container"),
+      typingContainer: document.getElementById("typing-form"),
+      romajiInput: document.getElementById("romaji-input"),
+      feedbackBanner: document.getElementById("feedback-banner"),
+      quizCard: document.getElementById("quiz-card"),
+      btnSpeak: document.getElementById("btn-speak"),
+      
+      modalStages: document.getElementById("modal-stages"),
+      btnOpenStages: document.getElementById("btn-open-stages"),
+      btnCloseStages: document.getElementById("btn-close-stages"),
+      stageGrid: document.getElementById("stage-grid"),
+
+      modalChart: document.getElementById("modal-chart"),
+      btnOpenChart: document.getElementById("btn-open-chart"),
+      btnCloseChart: document.getElementById("btn-close-chart"),
+      chartGrid: document.getElementById("chart-grid"),
+    };
+
+    // Helper: Speak Japanese character using browser SpeechSynthesis
+    function speakKana(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Initialize Stage Questions (Consisting of 3 question types: romajiToHiragana, hiraganaToRomaji, typeRomaji)
+    function initStage(stageNum) {
+      state.currentStage = stageNum;
+      localStorage.setItem("hiragana_stage", stageNum);
+      
+      const pool = kanaDatabase.filter(item => item.stage === stageNum);
+      
+      // Build a robust mixed queue incorporating all 3 pedagogical interaction modes
+      let rawQueue = [];
+      pool.forEach(item => {
+        rawQueue.push({ item, mode: 'romajiToHiragana' });
+        rawQueue.push({ item, mode: 'hiraganaToRomaji' });
+        rawQueue.push({ item, mode: 'typeRomaji' });
+      });
+
+      // Shuffle thoroughly
+      rawQueue.sort(() => 0.5 - Math.random());
+
+      // Limit stage length to 15 items for an engaging, snappy flow
+      state.queue = rawQueue.slice(0, 15);
+      state.totalInStage = state.queue.length;
+      
+      renderStageGrid();
+      updateStatsUI();
+      generateQuestion();
+    }
+
+    function toggleInputUI(mode) {
+      if (mode === "typing") {
+        elements.mcqContainer.classList.add("hidden");
+        elements.typingContainer.classList.remove("hidden");
+      } else {
+        elements.mcqContainer.classList.remove("hidden");
+        elements.typingContainer.classList.add("hidden");
+      }
+    }
+
+    // Generate Next Question
+    function generateQuestion() {
+      if (state.queue.length === 0) {
+        completeStage();
+        return;
+      }
+
+      state.isProcessing = false;
+      elements.feedbackBanner.classList.add("opacity-0");
+      elements.romajiInput.value = "";
+
+      const current = state.queue[0];
+      const target = current.item;
+      const mode = current.mode;
+
+      const typeLabel = mode === 'typeRomaji' ? 'TYPING CHALLENGE' : (mode === 'romajiToHiragana' ? 'READING (ROMAJI ➔ KANA)' : 'RECOGNITION (KANA ➔ ROMAJI)');
+      elements.categoryBadge.textContent = `${target.category.toUpperCase()} | ${typeLabel}`;
+
+      if (mode === "romajiToHiragana") {
+        elements.promptDisplay.textContent = target.romaji;
+        elements.promptSubtext.textContent = "Select the correct Hiragana character";
+        setupMCQOptions("hiragana");
+        toggleInputUI("mcq");
+      } else if (mode === "hiraganaToRomaji") {
+        elements.promptDisplay.textContent = target.hiragana;
+        elements.promptSubtext.textContent = "Select the correct Romaji reading";
+        setupMCQOptions("romaji");
+        toggleInputUI("mcq");
+      } else if (mode === "typeRomaji") {
+        elements.promptDisplay.textContent = target.hiragana;
+        elements.promptSubtext.textContent = "Type the Romaji translation on your keyboard";
+        toggleInputUI("typing");
+        setTimeout(() => elements.romajiInput.focus(), 100);
+      }
+
+      elements.promptDisplay.classList.remove("pop-in");
+      void elements.promptDisplay.offsetWidth; // trigger reflow
+      elements.promptDisplay.classList.add("pop-in");
+    }
+
+    // Generate Multiple Choice Choices
+    function setupMCQOptions(targetField) {
+      const targetItem = state.queue[0].item;
+      let distractors = kanaDatabase.filter(item => item.hiragana !== targetItem.hiragana);
+      distractors.sort(() => 0.5 - Math.random());
+      
+      const choices = distractors.slice(0, 3).map(item => item[targetField]);
+      choices.push(targetItem[targetField]);
+      choices.sort(() => 0.5 - Math.random());
+
+      elements.mcqContainer.innerHTML = "";
+      choices.forEach(optionText => {
+        const btn = document.createElement("button");
+        btn.className = "bg-slate-800/90 border border-slate-700/80 active:border-indigo-500 hover:bg-slate-700 text-white font-bold py-3.5 px-3 rounded-2xl text-lg flex items-center justify-center transition-all shadow-md active:scale-95";
+        btn.textContent = optionText;
+        btn.addEventListener("click", () => checkAnswer(optionText, btn));
+        elements.mcqContainer.appendChild(btn);
+      });
+    }
+
+    // Answer Verification Logic
+    function checkAnswer(userAnswer, clickedButton = null) {
+      if (state.isProcessing) return;
+      state.isProcessing = true;
+
+      const currentContext = state.queue[0];
+      const target = currentContext.item;
+      const mode = currentContext.mode;
+      let isCorrect = false;
+
+      if (mode === "romajiToHiragana") {
+        isCorrect = (userAnswer === target.hiragana);
+      } else if (mode === "hiraganaToRomaji") {
+        isCorrect = (userAnswer.toLowerCase() === target.romaji.toLowerCase());
+      } else if (mode === "typeRomaji") {
+        const cleanedInput = userAnswer.trim().toLowerCase();
+        const validAnswers = [target.romaji.toLowerCase()];
+        if (target.altRomaji) {
+          target.altRomaji.forEach(alt => validAnswers.push(alt.toLowerCase()));
+        }
+        isCorrect = validAnswers.includes(cleanedInput);
+      }
+
+      speakKana(target.hiragana);
+      state.totalAnswered++;
+
+      if (isCorrect) {
+        state.score++;
+        state.streak++;
+        if (state.streak > state.bestStreak) {
+          state.bestStreak = state.streak;
+          localStorage.setItem("hiragana_best_streak", state.bestStreak.toString());
+        }
+        showFeedback(true, `Correct! 🎉 (${target.hiragana} = ${target.romaji})`);
+        
+        if (clickedButton) {
+          clickedButton.className = "bg-emerald-600 border border-emerald-500 text-white font-bold py-3.5 px-3 rounded-2xl text-lg flex items-center justify-center shadow-lg transition-all";
+        }
+
+        state.queue.shift();
+      } else {
+        state.streak = 0;
+        showFeedback(false, `Incorrect ❌ - It was "${target.hiragana}" (${target.romaji})`);
+        
+        elements.quizCard.classList.add("shake");
+        setTimeout(() => elements.quizCard.classList.remove("shake"), 400);
+
+        if (clickedButton) {
+          clickedButton.className = "bg-rose-600 border border-rose-500 text-white font-bold py-3.5 px-3 rounded-2xl text-lg flex items-center justify-center shadow-lg transition-all";
+        }
+
+        // Spaced repetition: push incorrect item to the back of the queue
+        const wrongItem = state.queue.shift();
+        state.queue.push(wrongItem);
+      }
+
+      updateStatsUI();
+
+      setTimeout(() => {
+        generateQuestion();
+      }, isCorrect ? 900 : 1800);
+    }
+
+    // Feedback Toast Banner
+    function showFeedback(isCorrect, message) {
+      elements.feedbackBanner.textContent = message;
+      elements.feedbackBanner.className = `mt-3 min-h-[44px] w-full rounded-xl flex items-center justify-center px-4 py-2 text-sm font-semibold transition-opacity duration-200 shadow-sm ${
+        isCorrect ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+      }`;
+    }
+
+    // Stage Completion Handler
+    function completeStage() {
+      showFeedback(true, `Stage ${state.currentStage} Cleared! 🏆`);
+      
+      if (state.currentStage === state.maxStage && state.maxStage < 10) {
+        state.maxStage++;
+        localStorage.setItem("hiragana_max_stage", state.maxStage.toString());
+      }
+
+      setTimeout(() => {
+        if (state.currentStage < 10) {
+          initStage(state.currentStage + 1);
+        } else {
+          showFeedback(true, "All 10 Stages Mastered! 🎉 Grand Master!");
+          setTimeout(() => initStage(1), 2000);
+        }
+      }, 2000);
+    }
+
+    // Update Stats and Progress Bars
+    function updateStatsUI() {
+      elements.streakCounter.textContent = state.streak;
+      
+      const accuracy = state.totalAnswered === 0 ? 100 : Math.round((state.score / state.totalAnswered) * 100);
+      elements.statAccuracy.textContent = `${accuracy}%`;
+      elements.statBestStreak.textContent = state.bestStreak;
+
+      const answered = state.totalInStage - state.queue.length;
+      const progressPercent = state.totalInStage > 0 ? (answered / state.totalInStage) * 100 : 0;
+      
+      elements.stageProgressBar.style.width = `${progressPercent}%`;
+      elements.stageProgressText.textContent = `${answered}/${state.totalInStage}`;
+      
+      const sampleItem = kanaDatabase.find(i => i.stage === state.currentStage);
+      elements.stageTitleText.textContent = sampleItem ? sampleItem.label : `Stage ${state.currentStage}`;
+      elements.stageBadge.textContent = state.currentStage;
+    }
+
+    // Render Stage Grid Modal
+    function renderStageGrid() {
+      elements.stageGrid.innerHTML = "";
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement("button");
+        const isUnlocked = i <= state.maxStage;
+        const isActive = i === state.currentStage;
+        const sample = kanaDatabase.find(item => item.stage === i);
+        const stageName = sample ? sample.label.split(":")[1] || `Stage ${i}` : `Stage ${i}`;
+        
+        btn.className = `p-3.5 rounded-2xl flex flex-col items-start justify-center transition-all shadow-sm ${
+          isActive ? 'bg-indigo-600 text-white border-2 border-indigo-400 shadow-indigo-600/30 shadow-md' : 
+          isUnlocked ? 'bg-slate-800/90 text-indigo-200 border border-slate-700/80 hover:bg-slate-700 active:scale-95' :
+          'bg-slate-900 border border-slate-800/80 text-slate-600 cursor-not-allowed opacity-75'
+        }`;
+        
+        if (isUnlocked) {
+          btn.innerHTML = `
+            <div class="flex items-center justify-between w-full mb-1">
+              <span class="text-xs font-extrabold uppercase tracking-wider">Stage ${i}</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">Unlocked</span>
+            </div>
+            <div class="text-xs font-medium text-slate-300 truncate w-full text-left">${stageName}</div>
+          `;
+          btn.addEventListener("click", () => {
+            elements.modalStages.classList.add("hidden");
+            initStage(i);
+          });
+        } else {
+          btn.innerHTML = `
+            <div class="flex items-center justify-between w-full mb-1">
+              <span class="text-xs font-bold text-slate-500 uppercase">Stage ${i}</span>
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <div class="text-[11px] text-slate-600">Locked</div>
+          `;
+        }
+        
+        elements.stageGrid.appendChild(btn);
+      }
+    }
+
+    // Render Interactive Reference Chart
+    function renderChart(category) {
+      state.activeChartTab = category;
+      elements.chartGrid.innerHTML = "";
+      const filteredItems = kanaDatabase.filter(item => item.category === category);
+
+      filteredItems.forEach(item => {
+        const tile = document.createElement("div");
+        tile.className = "bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-2xl p-3 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all text-center shadow-sm";
+        
+        tile.innerHTML = `
+          <div class="text-2xl sm:text-3xl font-extrabold text-white mb-1">${item.hiragana}</div>
+          <div class="text-[11px] font-mono text-indigo-400 font-bold">${item.romaji}</div>
+        `;
+
+        tile.addEventListener("click", () => {
+          speakKana(item.hiragana);
+          tile.classList.add("bg-indigo-600/30", "border-indigo-500");
+          setTimeout(() => tile.classList.remove("bg-indigo-600/30", "border-indigo-500"), 300);
+        });
+
+        elements.chartGrid.appendChild(tile);
+      });
+    }
+
+    // Event Listeners for Typing form
+    elements.typingContainer.addEventListener("submit", (e) => {
+      e.preventDefault();
+      checkAnswer(elements.romajiInput.value);
+    });
+
+    // Pronunciation Speaker Button
+    elements.btnSpeak.addEventListener("click", () => {
+      if (state.queue.length > 0) {
+        speakKana(state.queue[0].item.hiragana);
+      }
+    });
+
+    // Modal Control: Stages
+    elements.btnOpenStages.addEventListener("click", () => {
+      renderStageGrid();
+      elements.modalStages.classList.remove("hidden");
+    });
+    elements.btnCloseStages.addEventListener("click", () => {
+      elements.modalStages.classList.add("hidden");
+    });
+
+    // Modal Control: Reference Chart
+    elements.btnOpenChart.addEventListener("click", () => {
+      elements.modalChart.classList.remove("hidden");
+      renderChart(state.activeChartTab);
+    });
+    elements.btnCloseChart.addEventListener("click", () => {
+      elements.modalChart.classList.add("hidden");
+    });
+
+    // Chart Tab Selection Buttons
+    document.querySelectorAll(".chart-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const targetTab = tab.getAttribute("data-chart-tab");
+        document.querySelectorAll(".chart-tab").forEach(t => {
+          t.className = "chart-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap transition-all shadow-sm";
+        });
+        tab.className = "chart-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white whitespace-nowrap transition-all shadow-sm";
+        renderChart(targetTab);
+      });
+    });
+
+    // App Startup Execution
+    window.addEventListener("DOMContentLoaded", () => {
+      initStage(state.currentStage);
+    });
+  </script>
+</body>
+</html>
